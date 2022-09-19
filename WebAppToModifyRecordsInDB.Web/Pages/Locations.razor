@@ -1,0 +1,78 @@
+﻿@page "/AllLocations"
+@inject ILocationService LocationService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Locations</PageTitle>
+
+<h3 class="mb-5">Locations</h3>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Location Id</th>
+        <th>Street</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Zip Code</th>
+        <th>Country</th>
+        <th>Track Code</th>
+        <th>Type</th>
+        <th>Accreditation Status</th>
+        <th>Expire Date</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Web Site</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    
+    @foreach (var location in LocationService.Locations)
+    {
+        <tr>
+            <td>@location.Id</td>
+            <td>@location.LocationId</td>
+            <td>@location.Address.Street</td>
+            <td>@location.Address.City</td>
+            <td>@location.Address.State</td>
+            <td>@location.Address.ZipPostalCode</td>
+            <td>@location.Address.Country</td>
+            <td>@location.TrackCode</td>
+            <td>@location.TrackType?.Name</td>
+            <td>@location.Accreditation.Status?.Name</td>
+            <td>@location.Accreditation.Expires</td>
+            <td>@location.Name</td>
+            <td>@location.Email</td>
+            <td>@location.Phone</td>
+            <td>@location.WebSite</td>
+            <td>
+                <button class="btn btn-primary" @onclick="(() => ShowLocation(location.Id))">
+                    <i class="oi oi-pencil"></i>
+                </button>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+<button class="btn btn-primary" @onclick="CreateLocation">Create Location</button>
+
+@code
+{
+    protected override async Task OnInitializedAsync()
+    {
+        await LocationService.GetAllLocations();
+    }
+
+    void ShowLocation(int id)
+    {
+        NavigationManager.NavigateTo($"EditLocation/{id}");
+    }
+
+    void CreateLocation()
+    {
+        NavigationManager.NavigateTo("/NewLocation");
+    }
+}
+

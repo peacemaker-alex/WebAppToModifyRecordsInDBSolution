@@ -1,0 +1,147 @@
+﻿@page "/NewLocation"
+@page "/EditLocation/{id:int}"
+@inject ILocationService LocationService
+
+@if (Id == null)
+{
+    <PageTitle>Create a new Location</PageTitle>
+    <h3>Create a new Location</h3>
+}
+else
+{
+    <PageTitle>Edit @LocationDto.LocationId</PageTitle>
+    <h3>Edit @LocationDto.LocationId</h3>
+}
+
+<EditForm Model="LocationDto" OnSubmit="HandelSubmit">
+    <div>
+        <label for="locationId">Location Id</label>
+        <InputText id="locationId" @bind-Value="LocationDto.LocationId" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="street">Street</label>
+        <InputText id="street" @bind-Value="LocationDto.Address.Street" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="city">City</label>
+        <InputText id="city" @bind-Value="LocationDto.Address.City" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="state">State</label>
+        <InputText id="state" @bind-Value="LocationDto.Address.State" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="zipPostalCode">Zip Code</label>
+        <InputText id="zipPostalCode" @bind-Value="LocationDto.Address.ZipPostalCode" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="country">Country</label>
+        <InputText id="country" @bind-Value="LocationDto.Address.Country" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="trackCode">Track Code</label>
+        <InputText id="trackCode" @bind-Value="LocationDto.TrackCode" class="form-control"></InputText>
+    </div>
+    <div>
+        <label>Type</label><br/>
+        <InputSelect @bind-Value="LocationDto.TrackTypeId" class="form-select">
+            @foreach (var type in LocationService.TrackTypes)
+            {
+                <option value="@type.Id">@type.Name</option>
+            }
+        </InputSelect>
+    </div>
+    <div>
+        <label>Status</label><br/>
+        <InputSelect @bind-Value="LocationDto.Accreditation.StatusId" class="form-select">
+            @foreach (var status in LocationService.Statuses)
+            {
+                <option value="@status.Id">@status.Name</option>
+            }
+        </InputSelect>
+    </div>
+    <div>
+        <label for="expires">Expires</label>
+        <InputText id="expires" @bind-Value="LocationDto.Accreditation.Expires" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="name">Name</label>
+        <InputText id="name" @bind-Value="LocationDto.Name" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="email">Email</label>
+        <InputText id="email" @bind-Value="LocationDto.Email" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="phone">Phone</label>
+        <InputText id="phone" @bind-Value="LocationDto.Phone" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="website">Web Site</label>
+        <InputText id="website" @bind-Value="LocationDto.WebSite" class="form-control"></InputText>
+    </div>
+    <br/>
+    <button type="submit" class="btn btn-primary">@BtnText</button>
+    <button type="button" class="btn btn-danger" @onclick="DeleteLocation">Delete Location</button>
+</EditForm>
+
+@code
+{
+    [Parameter]
+    public int? Id { get; set; }
+
+    string BtnText = string.Empty;
+
+    LocationDto LocationDto { get; set; } = new()
+    {
+        Accreditation = new AccreditationDto()
+        {
+            Status = new StatusDto()
+        },
+        Address = new AddressDto(),
+        TrackType = new TrackTypeDto()
+    };
+    
+    protected override async Task OnInitializedAsync()
+    {
+        BtnText = Id == null ? "Save Location" : "Update Location";
+
+        await LocationService.GetStatuses();
+
+        await LocationService.GetTrackTypes();
+    }
+        
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id == null)
+        {
+            LocationDto.TrackType = LocationService.TrackTypes[0];
+            LocationDto.TrackTypeId = LocationDto.TrackType.Id;
+
+            LocationDto.Accreditation.Status = LocationService.Statuses[0];
+            LocationDto.Accreditation.StatusId = LocationDto.Accreditation.Status.Id;
+        }
+        else
+        {
+            var result = await LocationService.GetLocation((int)Id);
+            LocationDto = result;
+        }
+    }
+
+    async Task HandelSubmit()
+    {
+        if (Id == null)
+        {
+            await LocationService.CreateLocation(LocationDto);
+        }
+        else
+        {
+            await LocationService.UpdateLocation(LocationDto);
+        }
+    }
+
+    async Task DeleteLocation()
+    {
+        await LocationService.DeleteLocation(LocationDto.Id);
+    }
+}
