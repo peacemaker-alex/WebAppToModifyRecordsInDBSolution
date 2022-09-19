@@ -134,9 +134,11 @@ namespace WebAppToModifyRecordsInDB.Controllers
         {
             locationDto.TrackType = null;
             locationDto.Accreditation.Status = null;
+
             var location = _mapper.Map<Location>(locationDto);
 
             _repository.CreateLocation(location);
+
             await _repository.SaveChangesAsync();
 
             return Ok(_mapper.Map<List<LocationDto>>(await _repository.GetAllLocations()));
@@ -157,7 +159,7 @@ namespace WebAppToModifyRecordsInDB.Controllers
 
             if (location == null)
             {
-                return NotFound();
+                return NotFound($"Record with such id={id} was not found in db.");
             }
 
             location.LocationId = updatedLocation.LocationId;
