@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -58,7 +59,7 @@ namespace WebAppToModifyRecordsInDB.Migrations
                     AccreditationId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     StatusId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Expires = table.Column<string>(type: "TEXT", nullable: false)
+                    Expires = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {

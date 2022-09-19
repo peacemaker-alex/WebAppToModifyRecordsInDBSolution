@@ -9,7 +9,7 @@ namespace WebAppToModifyRecordsInDB.Models
         [Required]
         public int StatusId { get; set; }
         [Required]
-        public string Expires { get; set; }
+        public DateTime Expires { get; set; } = DateTime.Now;
 
         public virtual Status? Status { get; set; }
     }

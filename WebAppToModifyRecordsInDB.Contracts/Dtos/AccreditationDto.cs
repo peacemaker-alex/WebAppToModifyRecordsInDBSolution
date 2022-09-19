@@ -2,7 +2,7 @@
 {
     public class AccreditationDto
     {
-        public string Expires { get; set; }
+        public DateTime Expires { get; set; } = DateTime.Now;
         public int StatusId { get; set; }
 
         public virtual StatusDto? Status { get; set; }
